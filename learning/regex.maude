@@ -1,0 +1,36 @@
+fmod REG-EXP-SYNTAX is
+    including QID .
+
+    sorts Act Exp Label .
+    subsorts Qid < Act < Exp .
+    subsort Act < Label .
+
+    op 0 : -> Exp [ctor] .
+    op 1 : -> Exp [ctor] .
+    op _+_ : Exp Exp -> Exp [frozen assoc comm prec 3] .
+    op _;_ : Exp Exp -> Exp [frozen prec 2] .
+    op _* : Exp -> Exp [frozen prec 1] .
+
+    op eps :  -> Label .
+endfm
+
+mod REG-EXP-SEMANTICS is
+    protecting REG-EXP-SYNTAX .
+
+    sort LabExp .
+    subsort Exp < LabExp .
+
+    op {_}_ : Label LabExp -> LabExp [frozen] .
+
+    vars E F E' F' : Exp .
+    vars L L' : Label .
+    vars A : Act .
+
+    rl [tic] : 1 => {eps}0 .
+    rl [atom] : A => {A}1 .
+    crl [sum] : E + F => {L}E' if E => {L}E' .
+    crl [seq1] : E ; F => {A}E' ; F if E => {A}E' .
+    crl [seq2] : E ; F => F if E => {eps}E' .
+    rl [star1] : E * => {eps}1 .
+    crl [star2] : E * => {L}E' ; E * if E => {L}E' .
+endm

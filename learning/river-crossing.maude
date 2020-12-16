@@ -1,0 +1,56 @@
+fmod RIVER-CROSSING-CONFIGURATION is
+    sort Element .
+    sort Group .
+    sort Side .
+
+    subsort Element < Group .
+
+    ops shepherd wolf lamb cabbage : Side -> Element [ctor] .
+    ops L R : -> Side [ctor] .
+
+    op change : Side -> Side .
+    eq change(L) = R .
+    eq change(R) = L .
+
+    op __ : Group Group -> Group [assoc comm].
+    op initial : -> Group .
+    eq initial = shepherd(L) wolf(L) lamb(L) cabbage(L) .
+
+    op isSuccess : Group -> Bool .
+    eq isSuccess(shepherd(R) wolf(R) lamb(R) cabbage(R)) = true .
+    var G : Group .
+    eq isSuccess(G) = false [owise] .
+    
+    op cabbageAtRisk : Group -> Bool .
+    vars S S1 S2 : Side .
+    ceq cabbageAtRisk(shepherd(S) wolf(S1) lamb(S2) cabbage(S2)) = true if S =/= S2 .
+    eq cabbageAtRisk(G) = false [owise] .
+endfm
+
+mod RIVER-CROSSING is
+    protecting RIVER-CROSSING-CONFIGURATION .
+
+    vars S S1 S2 : Side .
+
+    op changeSide : Element -> Element .
+    eq changeSide(wolf(S)) = wolf(change(S)) .
+    eq changeSide(lamb(S)) = lamb(change(S)) .
+    eq changeSide(cabbage(S)) = cabbage(change(S)) .
+
+    op isIn : Element Side -> Bool .
+    eq isIn(wolf(S), S) = true .
+    eq isIn(lamb(S), S) = true .
+    eq isIn(cabbage(S), S) = true .
+    eq isIn(shepherd(S), S) = true .
+    eq isIn(E, S) = false [owise] .
+
+    --- Constraints
+    ceq shepherd(S) wolf(S1) lamb(S2) cabbage(S2) = shepherd(S) wolf(S1) lamb(S2) if S =/= S2 .
+    ceq shepherd(S) wolf(S2) lamb(S2) cabbage(S1) = shepherd(S) wolf(S2) cabbage(S2) if S =/= S2 .
+    ceq shepherd(S) wolf(S2) lamb(S2) cabbage(S2) = shepherd(S) wolf(S2) if S =/= S2 .
+
+    rl [shepherdAlone] : shepherd(S) => shepherd(change(S)) .
+
+    var E : Element .
+    crl [shepherdWithEl] : shepherd(S) E  => shepherd(change(S)) changeSide(E) if isIn(E,S) .
+endm	

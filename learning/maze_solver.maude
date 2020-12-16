@@ -1,0 +1,45 @@
+---
+fmod INDEX is
+    including NAT .
+
+    --- predecessor
+    op p_ : NzNat -> Nat .
+    var N : Nat .
+    eq p s N = N .
+
+    sort Index .
+    op _,_ : Nat Nat -> Index [ctor] .
+endfm
+
+---
+fmod TILE is
+    protecting INDEX .
+    sort Tile .
+    subsort Index < Tile .
+
+    op w : -> Tile [ctor] .
+endfm
+
+--- --- used for data structures
+--- view Tile from TRIV to TILE is
+--- 	sort Elt to Tile .
+--- endv
+
+---
+fmod MAZE is
+    protecting TILE .
+
+    sort Maze .
+    subsort Tile < Maze .
+
+    --- TODO: must be completed
+    
+    --- op [_,_,_] : Nat Nat Tile -> Maze [ctor] .
+    --- op empty: -> Maze [ctor] .
+    --- op __ : Maze Maze -> Maze [ctor assoc comm id: empty] .
+
+endfm
+
+
+
+
